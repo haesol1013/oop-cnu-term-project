@@ -92,9 +92,7 @@ The VM supports the following instructions:
 - **CF**: Carry Flag
 - **OF**: Overflow Flag
 
-## 🚀 Usage
-
-### Prerequisites
+## 📦 Prerequisites
 
 **For C++ VM:**
 - CMake 4.0 or higher
@@ -103,7 +101,9 @@ The VM supports the following instructions:
 **For Python Assembler:**
 - Python 3.x
 
-### Building the VM (C++)
+## 🚀 Usage
+
+### Step 1: Build the VM
 
 1. **Create build directory:**
 ```bash
@@ -121,39 +121,11 @@ cmake ..
 cmake --build .
 ```
 
-The executable `oop_cnu_term_project.exe` (Windows) or `oop_cnu_term_project` (Linux/Mac) will be generated.
+The executable `oop_cnu_term_project.exe` (Windows) or `oop_cnu_term_project` (Linux/Mac) will be generated in the `build` directory.
 
-### Running the VM (C++)
+### Step 2: Write Assembly Code
 
-Execute a binary file:
-
-```bash
-./oop_cnu_term_project path/to/program.bin
-```
-
-### Using the Assembler (Python)
-
-The `encode.py` script converts assembly text files to binary format.
-
-**Basic Usage:**
-
-```bash
-python encode.py <input_file.txt> <output_file.bin>
-```
-
-**Batch Encoding Multiple Files:**
-
-The script also supports encoding all `.txt` files in a directory:
-
-```bash
-python encode.py
-```
-
-This will encode all files in the `text/` directory to the `bin/` directory.
-
-### Writing Assembly Code
-
-Create a text file with assembly instructions:
+Create a text file with assembly instructions in the `test/text/` directory:
 
 ```assembly
 # Example: add.txt
@@ -170,6 +142,37 @@ PRINT R0        # Print R0 (outputs: 20)
 - `REG`: Single register operand (e.g., `PRINT R0`)
 - `IMM`: Single immediate value (e.g., `JMP 5`)
 
+### Step 3: Assemble to Binary
+
+Navigate to the `test/` directory and run the assembler:
+
+**Encode all .txt files:**
+```bash
+cd test
+python encode.py
+```
+This will convert all `.txt` files in `text/` folder to `.bin` files in `bin/` folder.
+
+**Encode a single file:**
+```bash
+python encode.py text/add.txt bin/add.bin
+```
+
+### Step 4: Run the Program
+
+Execute the binary file with the VM:
+
+```bash
+cd build
+./oop_cnu_term_project ../test/bin/add.bin
+```
+
+**Example output:**
+```
+10
+20
+```
+
 ## 🧪 Testing
 
 Test files are located in the `test/` directory:
@@ -177,10 +180,23 @@ Test files are located in the `test/` directory:
 - `test/bin/`: Compiled binaries
 - `test/answer/`: Expected outputs
 
-To run tests:
-1. Encode test files: `python test/encode.py`
-2. Run each test: `./oop_cnu_term_project test/bin/<test_name>.bin`
-3. Compare output with files in `test/answer/`
+**To run tests:**
+
+1. **Encode test files:**
+```bash
+cd test
+python encode.py
+```
+
+2. **Run each test:**
+```bash
+cd ../build
+./oop_cnu_term_project ../test/bin/add.bin
+./oop_cnu_term_project ../test/bin/loop.bin
+./oop_cnu_term_project ../test/bin/stack.bin
+```
+
+3. **Compare output** with expected results in `test/answer/`
 
 ## 📄 License
 
