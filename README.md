@@ -131,11 +131,6 @@ Execute a binary file:
 ./oop_cnu_term_project path/to/program.bin
 ```
 
-**Example:**
-```bash
-./oop_cnu_term_project ../test/bin/add.bin
-```
-
 ### Using the Assembler (Python)
 
 The `encode.py` script converts assembly text files to binary format.
@@ -144,11 +139,6 @@ The `encode.py` script converts assembly text files to binary format.
 
 ```bash
 python encode.py <input_file.txt> <output_file.bin>
-```
-
-**Example:**
-```bash
-python encode.py test/text/add.txt test/bin/add.bin
 ```
 
 **Batch Encoding Multiple Files:**
