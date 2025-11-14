@@ -1,5 +1,5 @@
 import sys
-import os # os 모듈 임포트
+import os
 
 instructions = {
     "MOV"   : 0b000001,
@@ -114,55 +114,69 @@ def encode_file(input_file_path, output_bin_path):
     out.close()
 
 def main():
-    if sys.argv.__len__() != 3:
-        print("Usage: python encode.py <input_file_or_folder> <output_folder>")
-        sys.exit(1)
+    # 인자가 없으면 기본 경로 사용 (text/ -> bin/)
+    if len(sys.argv) == 1:
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        input_folder = os.path.join(script_dir, "text")
+        output_folder = os.path.join(script_dir, "bin")
 
-    input_path = sys.argv[1]
-    output_folder = sys.argv[2]
+        print("No arguments provided. Using default paths:")
+        print(f"  Input folder: {input_folder}")
+        print(f"  Output folder: {output_folder}\n")
 
-    # 출력 폴더가 없으면 생성 (exist_ok=True는 폴더가 이미 있어도 오류를 내지 않음)
-    os.makedirs(output_folder, exist_ok=True)
+        # 출력 폴더가 없으면 생성
+        os.makedirs(output_folder, exist_ok=True)
 
-    # 처리할 파일 목록을 담을 리스트
-    files_to_process = []
+        # text 폴더의 모든 .txt 파일 찾기
+        if not os.path.isdir(input_folder):
+            print(f"Error: Input folder {input_folder} does not exist.")
+            sys.exit(1)
 
-    if os.path.isdir(input_path):
-        # argv[1]이 폴더인 경우, 해당 폴더 내의 .txt 파일만 대상으로 함
-        print(f"Input is a directory. Processing all .txt files in {input_path}...")
-        for filename in os.listdir(input_path):
-            if filename.endswith(".txt"):
-                file_path = os.path.join(input_path, filename)
-                files_to_process.append(file_path)
-    elif os.path.isfile(input_path):
-        # argv[1]이 파일인 경우, 해당 파일만 대상으로 함
-        print(f"Input is a single file: {input_path}")
-        files_to_process.append(input_path)
-    else:
-        print(f"Error: Input path {input_path} is not a valid file or directory.")
-        sys.exit(1)
+        txt_files = [f for f in os.listdir(input_folder) if f.endswith(".txt")]
 
-    if not files_to_process:
-        print("No input files to process.")
-        return
+        if not txt_files:
+            print("No .txt files found in text/ folder.")
+            return
 
-    # 대상 파일들을 순회하며 인코딩
-    for input_file_path in files_to_process:
-        # 출력 파일 이름 생성 (예: /path/to/test.txt -> test.bin)
-        base_filename = os.path.basename(input_file_path) # test.txt
-        filename_no_ext = os.path.splitext(base_filename)[0] # test
-        output_bin_name = filename_no_ext + ".bin" # test.bin
+        # 각 파일 변환
+        for filename in txt_files:
+            input_file_path = os.path.join(input_folder, filename)
+            output_file_path = os.path.join(output_folder, filename.replace(".txt", ".bin"))
 
-        # 출력 파일의 전체 경로 (예: /output_folder/test.bin)
-        output_bin_path = os.path.join(output_folder, output_bin_name)
+            try:
+                print(f"Encoding {filename} -> {os.path.basename(output_file_path)}")
+                encode_file(input_file_path, output_file_path)
+            except Exception as e:
+                print(f"  FAILED: {e}")
+
+        print(f"\nEncoding complete. Output files are in {output_folder}")
+
+    elif len(sys.argv) == 3:
+        # 단일 파일 변환 모드
+        input_file = sys.argv[1]
+        output_file = sys.argv[2]
+
+        if not os.path.isfile(input_file):
+            print(f"Error: Input file {input_file} does not exist.")
+            sys.exit(1)
+
+        # 출력 파일의 디렉토리가 없으면 생성
+        output_dir = os.path.dirname(output_file)
+        if output_dir and not os.path.exists(output_dir):
+            os.makedirs(output_dir, exist_ok=True)
 
         try:
-            print(f"Encoding {input_file_path} -> {output_bin_path}")
-            encode_file(input_file_path, output_bin_path)
+            print(f"Encoding {input_file} -> {output_file}")
+            encode_file(input_file, output_file)
+            print("Encoding complete.")
         except Exception as e:
-            print(f"--- FAILED to encode {input_file_path}: {e} ---")
-
-    print(f"\nEncoding complete. Output files are in {output_folder}")
+            print(f"FAILED: {e}")
+            sys.exit(1)
+    else:
+        print("Usage:")
+        print("  python encode.py                                    # Encode all .txt files in text/ to bin/")
+        print("  python encode.py <input_file.txt> <output_file.bin> # Encode single file")
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
