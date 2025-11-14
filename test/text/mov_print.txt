@@ -1,0 +1,2 @@
+MOV R0, 10
+PRINT R0
