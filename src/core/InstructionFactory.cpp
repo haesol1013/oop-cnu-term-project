@@ -2,6 +2,7 @@
 #include <stdexcept>
 
 #include "Enums.h"
+#include "core/VMException.h"
 #include "instructions/MovInstruction.h"
 #include "instructions/AddInstruction.h"
 #include "instructions/SubInstruction.h"
@@ -14,6 +15,32 @@
 #include "instructions/BneInstruction.h"
 #include "instructions/PrintInstruction.h"
 
+
+static bool isValidFlag(const OpCode op, uint8_t flagVal) {
+    auto f = static_cast<FlagType>(flagVal);
+
+    switch (op) {
+        case OpCode::MOV:
+        case OpCode::ADD:
+        case OpCode::SUB:
+        case OpCode::MUL:
+        case OpCode::CMP:
+            return (f == FlagType::REG_REG || f == FlagType::REG_VAL);
+
+        case OpCode::PUSH:
+        case OpCode::JMP:
+        case OpCode::BE:
+        case OpCode::BNE:
+        case OpCode::PRINT:
+            return (f == FlagType::SINGLE_REG || f == FlagType::SINGLE_VAL);
+
+        case OpCode::POP:
+            return (f == FlagType::SINGLE_REG);
+
+        default:
+            return false;
+    }
+}
 
 InstructionFactory::InstructionFactory() {
 
@@ -79,14 +106,22 @@ std::vector<std::unique_ptr<IInstruction>> InstructionFactory::createProgram(
     std::vector<std::unique_ptr<IInstruction>> program;
     program.reserve(rawByteStream.size());
 
-    for (const uint32_t& raw : rawByteStream) {
+    for (size_t i = 0; i < rawByteStream.size(); ++i) {
+        uint32_t raw = rawByteStream[i];
         ParsedInstruction parsed = parseRaw(raw);
 
         auto it = m_registry.find(parsed.opcode);
         if (it == m_registry.end()) {
-            throw std::runtime_error("Error: Unknown Opcode encountered: 0x" + std::to_string(parsed.opcode));
+            throw VMException("Unknown Opcode: " + std::to_string(parsed.opcode), static_cast<int>(i));
         }
 
+        if (!isValidFlag(static_cast<OpCode>(parsed.opcode), parsed.flag)) {
+            throw VMException(
+                "Invalid Flag (" + std::to_string(parsed.flag) +
+                ") for Opcode " + std::to_string(parsed.opcode),
+                static_cast<int>(i)
+            );
+        }
         CreateFunc& creator = it->second;
         program.push_back(creator(parsed.flag, parsed.src, parsed.dest));
     }

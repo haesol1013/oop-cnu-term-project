@@ -1,4 +1,5 @@
 #include "core/VMContext.h"
+#include "core/VMException.h"
 #include <stdexcept>
 
 constexpr size_t STACK_SIZE = 256;
@@ -23,10 +24,21 @@ void VMContext::loadProgram(std::vector<std::unique_ptr<IInstruction>> program) 
 void VMContext::run() {
     uint8_t& pc = m_registers[static_cast<uint8_t>(RegisterID::PC)];
 
-    while (pc < m_program.size()) {
-        IInstruction* currentInstruction = m_program[pc].get();
-        currentInstruction->execute(*this);
+    try {
+        while (pc < m_program.size()) {
+            IInstruction* currentInstruction = m_program[pc].get();
+            currentInstruction->execute(*this);
+            if (pc > m_program.size()) {
+                throw std::runtime_error("Program Counter out of bounds: " + std::to_string(pc));
+            }
+        }
+    } catch (const std::exception& e) {
+        if (dynamic_cast<const VMException*>(&e)) {
+            throw;
+        }
+        throw VMException(e.what(), static_cast<int>(pc));
     }
+
 }
 
 uint8_t VMContext::getRegister(uint8_t regId) const {
