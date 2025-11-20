@@ -18,6 +18,9 @@ VMContext::VMContext() : m_stackMemory(STACK_SIZE) {
 }
 
 void VMContext::loadProgram(std::vector<std::unique_ptr<IInstruction>> program) {
+    if (program.size() > 255) {
+        throw std::runtime_error("Program too large: Max 255 instructions allowed.");
+    }
     m_program = std::move(program);
 }
 
