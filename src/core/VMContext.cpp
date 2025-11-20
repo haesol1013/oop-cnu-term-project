@@ -26,6 +26,10 @@ void VMContext::run() {
 
     try {
         while (pc < m_program.size()) {
+            if (!m_program[pc]) {
+                throw std::runtime_error("Null instruction pointer encountered at index " + std::to_string(pc));
+            }
+
             IInstruction* currentInstruction = m_program[pc].get();
             currentInstruction->execute(*this);
             if (pc > m_program.size()) {
