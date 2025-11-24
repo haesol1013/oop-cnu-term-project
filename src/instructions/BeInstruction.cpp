@@ -2,7 +2,7 @@
 #include "core/VMContext.h"
 
 BeInstruction::BeInstruction(uint8_t flag, uint8_t src, uint8_t dest)
-    : m_flag(flag), m_dest(dest) {}
+    : IInstruction(flag, src, dest) {}
 
 void BeInstruction::execute(VMContext& context) {
     if (context.getFlag(RegisterID::ZF)) {

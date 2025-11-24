@@ -2,7 +2,7 @@
 #include "core/VMContext.h"
 
 PopInstruction::PopInstruction(uint8_t flag, uint8_t src, uint8_t dest)
-    : m_dest(dest) {}
+    : IInstruction(flag, src, dest) {}
 
 void PopInstruction::execute(VMContext& context) {
     uint8_t value = context.popStack();

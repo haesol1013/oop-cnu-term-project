@@ -6,6 +6,4 @@ class PopInstruction : public IInstruction {
 public:
     PopInstruction(uint8_t flag, uint8_t src, uint8_t dest);
     void execute(VMContext& context) override;
-private:
-    uint8_t m_dest;
 };

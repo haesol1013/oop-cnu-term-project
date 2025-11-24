@@ -2,7 +2,7 @@
 #include "core/VMContext.h"
 
 BneInstruction::BneInstruction(uint8_t flag, uint8_t src, uint8_t dest)
-    : m_flag(flag), m_dest(dest) {}
+    : IInstruction(flag, src, dest) {}
 
 void BneInstruction::execute(VMContext& context) {
     if (!context.getFlag(RegisterID::ZF)) {

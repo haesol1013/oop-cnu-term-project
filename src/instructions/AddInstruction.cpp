@@ -2,7 +2,7 @@
 #include "core/VMContext.h"
 
 AddInstruction::AddInstruction(uint8_t flag, uint8_t src, uint8_t dest)
-    : m_flag(flag), m_src(src), m_dest(dest) {}
+    : IInstruction(flag, src, dest) {}
 
 void AddInstruction::execute(VMContext& context) {
     uint8_t val1 = context.getRegister(m_dest);
