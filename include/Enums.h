@@ -1,6 +1,8 @@
 #pragma once
 #include <cstdint>
 
+constexpr size_t REGISTER_COUNT = 9;
+
 enum class RegisterID : uint8_t {
     R0 = 0x01,
     R1 = 0x02,

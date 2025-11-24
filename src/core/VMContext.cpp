@@ -2,9 +2,7 @@
 #include "core/VMException.h"
 #include <stdexcept>
 
-constexpr size_t STACK_SIZE = 256;
-
-VMContext::VMContext() : m_stackMemory(STACK_SIZE) {
+VMContext::VMContext() : m_registers{}, m_stackMemory{} {
     m_registers[static_cast<uint8_t>(RegisterID::R0)] = 0;
     m_registers[static_cast<uint8_t>(RegisterID::R1)] = 0;
     m_registers[static_cast<uint8_t>(RegisterID::R2)] = 0;
@@ -49,19 +47,17 @@ void VMContext::run() {
 }
 
 uint8_t VMContext::getRegister(uint8_t regId) const {
-    auto it = m_registers.find(regId);
-    if (it == m_registers.end()) {
+    if (regId >= m_registers.size()) {
         throw std::runtime_error("Error: Accessing invalid register");
     }
-    return it->second;
+    return m_registers[regId];
 }
 
 void VMContext::setRegister(uint8_t regId, uint8_t value) {
-    auto it = m_registers.find(regId);
-    if (it == m_registers.end()) {
+    if (regId >= m_registers.size()) {
         throw std::runtime_error("Error: Accessing invalid register");
     }
-    it->second = value;
+    m_registers[regId] = value;
 }
 
 bool VMContext::getFlag(RegisterID flag) const {

@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include <unordered_map>
+#include <array>
 #include <memory>
 #include "Enums.h"
 #include "core/IInstruction.h"
@@ -27,8 +27,10 @@ public:
 
     void updateCmpFlags(int16_t result);
 
+    static constexpr size_t STACK_SIZE = 256;
+
 private:
-    std::unordered_map<uint8_t, uint8_t> m_registers;
-    std::vector<uint8_t> m_stackMemory;
+    std::array<uint8_t, REGISTER_COUNT> m_registers;
+    std::array<uint8_t, STACK_SIZE> m_stackMemory;
     std::vector<std::unique_ptr<IInstruction>> m_program;
 };
