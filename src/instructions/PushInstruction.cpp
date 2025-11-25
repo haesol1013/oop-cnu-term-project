@@ -6,7 +6,6 @@ PushInstruction::PushInstruction(uint8_t flag, uint8_t src, uint8_t dest)
 
 ExecutionResult PushInstruction::execute(VMContext& context) {
     uint8_t value = resolveValue(context, m_dest);
-
     context.pushStack(value);
     return ExecutionResult::Next;
 }

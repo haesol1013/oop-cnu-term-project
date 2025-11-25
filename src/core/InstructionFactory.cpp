@@ -46,7 +46,7 @@ static void validateOperands(FlagType flag, uint8_t src, uint8_t dest, int instr
             throw VMException("Invalid Register Operand (" + type + "): " + std::to_string(regId), instructionIndex);
         }
         if (regId == 0) {
-             throw VMException("Invalid Register Operand (" + type + "): Register 0 is reserved/unused.", instructionIndex);
+            throw VMException("Invalid Register Operand (" + type + "): Register 0 is reserved/unused.", instructionIndex);
         }
     };
 

@@ -10,7 +10,7 @@ uint8_t IInstruction::resolveValue(const VMContext& context, uint8_t operand) co
             return context.getRegister(operand);
         case FlagType::REG_VAL:
         case FlagType::SINGLE_VAL:
-            return operand;
+            [[fallthrough]];
         default:
             return operand;
     }

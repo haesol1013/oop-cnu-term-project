@@ -43,7 +43,7 @@ void VMContext::run() {
             }
 
             if (getRegister(RegisterID::PC) > m_program.size()) {
-                 throw std::runtime_error("Program Counter out of bounds: " + std::to_string(getRegister(RegisterID::PC)));
+                throw std::runtime_error("Program Counter out of bounds: " + std::to_string(getRegister(RegisterID::PC)));
             }
         }
     } catch (const std::exception& e) {
@@ -52,7 +52,6 @@ void VMContext::run() {
         }
         throw VMException(e.what(), static_cast<int>(getRegister(RegisterID::PC)));
     }
-
 }
 
 uint8_t VMContext::getRegister(uint8_t regId) const {
@@ -73,7 +72,7 @@ void VMContext::setRegister(uint8_t regId, uint8_t value) {
 
     auto id = static_cast<RegisterID>(regId);
     if (id == RegisterID::ZF || id == RegisterID::CF || id == RegisterID::OF) {
-                        throw std::runtime_error("Invalid Operation: Cannot write to Flag Register directly.");
+        throw std::runtime_error("Invalid Operation: Cannot write to Flag Register directly.");
     }
 
     m_registers[regId] = value;
@@ -125,7 +124,7 @@ void VMContext::incrementPC() {
 }
 
 void VMContext::setPC(uint8_t address) {
-        if (address >= m_program.size()) {
+    if (address >= m_program.size()) {
         throw std::runtime_error("Invalid Jump Address: " + std::to_string(address));
     }
     setRegisterInternal(RegisterID::PC, address);
