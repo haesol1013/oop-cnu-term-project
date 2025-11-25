@@ -1,7 +1,7 @@
 #pragma once
 #include <cstdint>
 
-constexpr size_t REGISTER_COUNT = 9;
+constexpr size_t REGISTER_COUNT = 10;
 
 enum class RegisterID : uint8_t {
     R0 = 0x01,
