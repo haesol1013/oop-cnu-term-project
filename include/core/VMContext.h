@@ -32,6 +32,7 @@ public:
     static constexpr size_t STACK_SIZE = 256;
 
 private:
+    void setRegisterInternal(RegisterID regId, uint8_t value);
     std::array<uint8_t, REGISTER_COUNT> m_registers;
     std::array<uint8_t, STACK_SIZE> m_stackMemory;
     std::vector<std::unique_ptr<IInstruction>> m_program;
