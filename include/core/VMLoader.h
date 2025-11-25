@@ -3,9 +3,9 @@
 #include <vector>
 #include <cstdint>
 
-class VmLoader {
+class VMLoader {
 public:
-    VmLoader() = default;
+    VMLoader() = default;
 
     static std::vector<uint32_t> loadBinaryFile(const std::string& filePath);
 };

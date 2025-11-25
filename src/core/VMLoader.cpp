@@ -1,8 +1,8 @@
-#include "core/VmLoader.h"
+#include "core/VMLoader.h"
 #include <fstream>
 #include <stdexcept>
 
-std::vector<uint32_t> VmLoader::loadBinaryFile(const std::string& filePath) {
+std::vector<uint32_t> VMLoader::loadBinaryFile(const std::string& filePath) {
     std::ifstream file(filePath, std::ios::binary | std::ios::ate);
 
     if (!file.is_open()) {

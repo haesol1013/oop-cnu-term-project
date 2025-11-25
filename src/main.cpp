@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include "core/VmLoader.h"
+#include "core/VMLoader.h"
 #include "core/InstructionFactory.h"
 #include "core/VMContext.h"
 #include "core/VMException.h"
@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     std::string filePath = argv[1];
 
     try {
-        std::vector<uint32_t> rawCode = VmLoader::loadBinaryFile(filePath);
+        std::vector<uint32_t> rawCode = VMLoader::loadBinaryFile(filePath);
 
         InstructionFactory factory;
         std::vector<std::unique_ptr<IInstruction>> program = factory.createProgram(rawCode);
