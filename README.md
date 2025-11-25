@@ -12,7 +12,7 @@ For detailed technical documentation, including system architecture, design patt
 
 **For C++ VM:**
 
-- CMake 4.0 or higher
+- CMake 3.1 or higher
 - C++17 compatible compiler (GCC, Clang, MSVC)
 
 **For Python Tools:**
