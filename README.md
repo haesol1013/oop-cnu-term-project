@@ -16,6 +16,7 @@ oop-cnu-term-project/
 │   │   ├── IInstruction.h     # Abstract instruction interface
 │   │   ├── InstructionFactory.h  # Factory for creating instructions
 │   │   ├── VMContext.h        # VM execution context
+│   │   ├── VMException.h      # VM exception class
 │   │   └── VmLoader.h         # Binary file loader
 │   └── instructions/          # Concrete instruction implementations
 │       ├── AddInstruction.h
