@@ -40,6 +40,27 @@ static bool isValidFlag(const OpCode op, uint8_t flagVal) {
     }
 }
 
+static void validateOperands(FlagType flag, uint8_t src, uint8_t dest, int instructionIndex) {
+    auto checkRegister = [&](uint8_t regId, const std::string& type) {
+        if (regId >= REGISTER_COUNT) {
+            throw VMException("Invalid Register Operand (" + type + "): " + std::to_string(regId), instructionIndex);
+        }
+    };
+
+    switch (flag) {
+        case FlagType::REG_REG:
+            checkRegister(src, "Source");
+            checkRegister(dest, "Destination");
+            break;
+        case FlagType::REG_VAL:
+        case FlagType::SINGLE_REG:
+            checkRegister(dest, "Destination");
+            break;
+        case FlagType::SINGLE_VAL:
+            break;
+    }
+}
+
 InstructionFactory::InstructionFactory() {
 
     m_registry[static_cast<uint8_t>(OpCode::MOV)] =
@@ -120,6 +141,9 @@ std::vector<std::unique_ptr<IInstruction>> InstructionFactory::createProgram(
                 static_cast<int>(i)
             );
         }
+
+        validateOperands(static_cast<FlagType>(parsed.flag), parsed.src, parsed.dest, static_cast<int>(i));
+
         CreateFunc& creator = it->second;
         program.push_back(creator(parsed.flag, parsed.src, parsed.dest));
     }
