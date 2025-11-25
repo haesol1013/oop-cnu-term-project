@@ -7,11 +7,11 @@ public:
     explicit VMException(const std::string& message, int pcIndex = -1)
         : std::runtime_error(message), m_pcIndex(pcIndex) {}
 
-    int getPCIndex() const {
+    [[nodiscard]] int getPCIndex() const {
         return m_pcIndex;
     }
 
-    std::string getFullMessage() const {
+    [[nodiscard]] std::string getFullMessage() const {
         if (m_pcIndex != -1) {
             return "Runtime Error at instruction [" + std::to_string(m_pcIndex) + "]: " + what();
         }

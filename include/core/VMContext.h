@@ -11,10 +11,10 @@ public:
     void loadProgram(std::vector<std::unique_ptr<IInstruction>> program);
     void run();
 
-    uint8_t getRegister(uint8_t regId) const;
+    [[nodiscard]] uint8_t getRegister(uint8_t regId) const;
     void setRegister(uint8_t regId, uint8_t value);
 
-    bool getFlag(RegisterID flag) const;
+    [[nodiscard]] bool getFlag(RegisterID flag) const;
     void setFlag(RegisterID flag, bool value);
 
     void pushStack(uint8_t value);

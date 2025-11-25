@@ -1,6 +1,4 @@
 #include "core/InstructionFactory.h"
-#include <stdexcept>
-
 #include "Enums.h"
 #include "core/VMException.h"
 #include "instructions/MovInstruction.h"
@@ -130,7 +128,7 @@ std::vector<std::unique_ptr<IInstruction>> InstructionFactory::createProgram(
 }
 
 ParsedInstruction InstructionFactory::parseRaw(uint32_t raw) {
-    ParsedInstruction p;
+    ParsedInstruction p{};
     uint8_t byte0 = (raw >> 0) & 0xFF;
     p.opcode = byte0 >> 2;
     p.flag = byte0 & 0x03;
