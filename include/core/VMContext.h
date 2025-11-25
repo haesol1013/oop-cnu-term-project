@@ -12,7 +12,9 @@ public:
     void run();
 
     [[nodiscard]] uint8_t getRegister(uint8_t regId) const;
+    [[nodiscard]] uint8_t getRegister(RegisterID regId) const;
     void setRegister(uint8_t regId, uint8_t value);
+    void setRegister(RegisterID regId, uint8_t value);
 
     [[nodiscard]] bool getFlag(RegisterID flag) const;
     void setFlag(RegisterID flag, bool value);

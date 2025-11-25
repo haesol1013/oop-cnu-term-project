@@ -3,16 +3,16 @@
 #include <stdexcept>
 
 VMContext::VMContext() : m_registers{}, m_stackMemory{} {
-    m_registers[static_cast<uint8_t>(RegisterID::R0)] = 0;
-    m_registers[static_cast<uint8_t>(RegisterID::R1)] = 0;
-    m_registers[static_cast<uint8_t>(RegisterID::R2)] = 0;
-    m_registers[static_cast<uint8_t>(RegisterID::PC)] = 0;
-    m_registers[static_cast<uint8_t>(RegisterID::ZF)] = 0;
-    m_registers[static_cast<uint8_t>(RegisterID::CF)] = 0;
-    m_registers[static_cast<uint8_t>(RegisterID::OF)] = 0;
+    setRegister(RegisterID::R0, 0);
+    setRegister(RegisterID::R1, 0);
+    setRegister(RegisterID::R2, 0);
+    setRegister(RegisterID::PC, 0);
+    setRegister(RegisterID::ZF, 0);
+    setRegister(RegisterID::CF, 0);
+    setRegister(RegisterID::OF, 0);
 
-    m_registers[static_cast<uint8_t>(RegisterID::SP)] = STACK_SIZE - 1;
-    m_registers[static_cast<uint8_t>(RegisterID::BP)] = STACK_SIZE - 1;
+    setRegister(RegisterID::SP, STACK_SIZE - 1);
+    setRegister(RegisterID::BP, STACK_SIZE - 1);
 }
 
 void VMContext::loadProgram(std::vector<std::unique_ptr<IInstruction>> program) {
@@ -23,25 +23,29 @@ void VMContext::loadProgram(std::vector<std::unique_ptr<IInstruction>> program) 
 }
 
 void VMContext::run() {
-    uint8_t& pc = m_registers[static_cast<uint8_t>(RegisterID::PC)];
-
     try {
-        while (pc < m_program.size()) {
+        while (true) {
+            uint8_t pc = getRegister(RegisterID::PC);
+            if (pc >= m_program.size()) {
+                 break; 
+            }
+
             if (!m_program[pc]) {
                 throw std::runtime_error("Null instruction pointer encountered at index " + std::to_string(pc));
             }
 
             IInstruction* currentInstruction = m_program[pc].get();
             currentInstruction->execute(*this);
-            if (pc > m_program.size()) {
-                throw std::runtime_error("Program Counter out of bounds: " + std::to_string(pc));
+
+            if (getRegister(RegisterID::PC) > m_program.size()) {
+                 throw std::runtime_error("Program Counter out of bounds: " + std::to_string(getRegister(RegisterID::PC)));
             }
         }
     } catch (const std::exception& e) {
         if (dynamic_cast<const VMException*>(&e)) {
             throw;
         }
-        throw VMException(e.what(), static_cast<int>(pc));
+        throw VMException(e.what(), static_cast<int>(getRegister(RegisterID::PC)));
     }
 
 }
@@ -53,6 +57,10 @@ uint8_t VMContext::getRegister(uint8_t regId) const {
     return m_registers[regId];
 }
 
+uint8_t VMContext::getRegister(RegisterID regId) const {
+    return getRegister(static_cast<uint8_t>(regId));
+}
+
 void VMContext::setRegister(uint8_t regId, uint8_t value) {
     if (regId >= m_registers.size()) {
         throw std::runtime_error("Error: Accessing invalid register");
@@ -60,39 +68,45 @@ void VMContext::setRegister(uint8_t regId, uint8_t value) {
     m_registers[regId] = value;
 }
 
-bool VMContext::getFlag(RegisterID flag) const {
-    return getRegister(static_cast<uint8_t>(flag)) == 1;
+void VMContext::setRegister(RegisterID regId, uint8_t value) {
+    setRegister(static_cast<uint8_t>(regId), value);
 }
 
-void VMContext::setFlag(RegisterID flag, bool value) {
-    m_registers[static_cast<uint8_t>(flag)] = (value ? 1 : 0);
+bool VMContext::getFlag(const RegisterID flag) const {
+    return getRegister(flag) == 1;
+}
+
+void VMContext::setFlag(const RegisterID flag, bool value) {
+    setRegister(flag, (value ? 1 : 0));
 }
 
 void VMContext::pushStack(uint8_t value) {
-    uint8_t& sp = m_registers[static_cast<uint8_t>(RegisterID::SP)];
+    uint8_t sp = getRegister(RegisterID::SP);
     if (sp == 0) {
         throw std::runtime_error("Error: Stack Overflow");
     }
     sp--;
     m_stackMemory[sp] = value;
+    setRegister(RegisterID::SP, sp);
 }
 
 uint8_t VMContext::popStack() {
-    uint8_t& sp = m_registers[static_cast<uint8_t>(RegisterID::SP)];
+    uint8_t sp = getRegister(RegisterID::SP);
     if (sp == STACK_SIZE - 1) {
         throw std::runtime_error("Error: Stack Underflow");
     }
     uint8_t value = m_stackMemory[sp];
     sp++;
+    setRegister(RegisterID::SP, sp);
     return value;
 }
 
 void VMContext::incrementPC() {
-    m_registers[static_cast<uint8_t>(RegisterID::PC)]++;
+    setRegister(RegisterID::PC, getRegister(RegisterID::PC) + 1);
 }
 
 void VMContext::setPC(uint8_t address) {
-    m_registers[static_cast<uint8_t>(RegisterID::PC)] = address;
+    setRegister(RegisterID::PC, address);
 }
 
 void VMContext::updateFlags(uint8_t result, bool carry, bool overflow) {
