@@ -4,11 +4,11 @@
 BneInstruction::BneInstruction(uint8_t flag, uint8_t src, uint8_t dest)
     : IInstruction(flag, src, dest) {}
 
-void BneInstruction::execute(VMContext& context) {
+ExecutionResult BneInstruction::execute(VMContext& context) {
     if (!context.getFlag(RegisterID::ZF)) {
         uint8_t jumpAddress = resolveValue(context, m_dest);
         context.setPC(jumpAddress);
-    } else {
-        context.incrementPC();
+        return ExecutionResult::Jumped;
     }
+    return ExecutionResult::Next;
 }

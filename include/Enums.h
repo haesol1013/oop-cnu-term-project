@@ -35,3 +35,8 @@ enum class FlagType : uint8_t {
     SINGLE_REG = 0b10,
     SINGLE_VAL = 0b11
 };
+
+enum class ExecutionResult {
+    Next,
+    Jumped
+};

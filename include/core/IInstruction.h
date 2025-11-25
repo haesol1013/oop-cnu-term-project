@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "Enums.h"
 
 class VMContext;
 
@@ -8,7 +9,7 @@ public:
     IInstruction(uint8_t flag, uint8_t src, uint8_t dest)
         : m_flag(flag), m_src(src), m_dest(dest) {}
     virtual ~IInstruction() = default;
-    virtual void execute(VMContext& context) = 0;
+    virtual ExecutionResult execute(VMContext& context) = 0;
 
 protected:
     [[nodiscard]] uint8_t resolveValue(const VMContext& context, uint8_t operand) const;

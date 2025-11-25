@@ -35,7 +35,12 @@ void VMContext::run() {
             }
 
             IInstruction* currentInstruction = m_program[pc].get();
-            currentInstruction->execute(*this);
+            
+            ExecutionResult result = currentInstruction->execute(*this);
+
+            if (result == ExecutionResult::Next) {
+                incrementPC();
+            }
 
             if (getRegister(RegisterID::PC) > m_program.size()) {
                  throw std::runtime_error("Program Counter out of bounds: " + std::to_string(getRegister(RegisterID::PC)));

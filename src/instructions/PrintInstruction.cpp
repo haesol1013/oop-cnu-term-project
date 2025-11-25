@@ -5,9 +5,9 @@
 PrintInstruction::PrintInstruction(uint8_t flag, uint8_t src, uint8_t dest)
     : IInstruction(flag, src, dest) {}
 
-void PrintInstruction::execute(VMContext& context) {
+ExecutionResult PrintInstruction::execute(VMContext& context) {
     uint8_t valueToPrint = resolveValue(context, m_dest);
 
-    std::cout << static_cast<int>(valueToPrint) << std::endl;
-    context.incrementPC();
+    std::cout << std::to_string(static_cast<int8_t>(valueToPrint)) << std::endl;
+    return ExecutionResult::Next;
 }

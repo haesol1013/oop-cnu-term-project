@@ -4,7 +4,7 @@
 MulInstruction::MulInstruction(uint8_t flag, uint8_t src, uint8_t dest)
     : IInstruction(flag, src, dest) {}
 
-void MulInstruction::execute(VMContext& context) {
+ExecutionResult MulInstruction::execute(VMContext& context) {
     uint8_t val1 = context.getRegister(m_dest);
     uint8_t val2 = resolveValue(context, m_src);
 
@@ -15,5 +15,5 @@ void MulInstruction::execute(VMContext& context) {
 
     context.setRegister(m_dest, finalResult);
     context.updateFlags(finalResult, carryOrOverflow, carryOrOverflow);
-    context.incrementPC();
+    return ExecutionResult::Next;
 }

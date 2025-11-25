@@ -4,8 +4,8 @@
 PopInstruction::PopInstruction(uint8_t flag, uint8_t src, uint8_t dest)
     : IInstruction(flag, src, dest) {}
 
-void PopInstruction::execute(VMContext& context) {
+ExecutionResult PopInstruction::execute(VMContext& context) {
     uint8_t value = context.popStack();
     context.setRegister(m_dest, value);
-    context.incrementPC();
+    return ExecutionResult::Next;
 }

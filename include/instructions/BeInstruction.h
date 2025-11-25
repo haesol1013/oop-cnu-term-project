@@ -5,5 +5,5 @@
 class BeInstruction : public IInstruction {
 public:
     BeInstruction(uint8_t flag, uint8_t src, uint8_t dest);
-    void execute(VMContext& context) override;
+    ExecutionResult execute(VMContext& context) override;
 };
