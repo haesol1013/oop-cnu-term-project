@@ -1,0 +1,81 @@
+classDiagram
+    %% 1. Core System Classes
+    class VMContext {
+        +VMContext()
+        +loadProgram(program : vector) void
+        +run() void
+        +getRegister(regId : uint8_t) uint8_t
+        +getRegister(regId : RegisterID) uint8_t
+        +setRegister(regId : uint8_t, value : uint8_t) void
+        +setRegister(regId : RegisterID, value : uint8_t) void
+        +getFlag(flag : RegisterID) bool
+        +setFlag(flag : RegisterID, value : bool) void
+        +pushStack(value : uint8_t) void
+        +popStack() uint8_t
+        +setPC(address : uint8_t) void
+        +incrementPC() void
+        +updateFlags(result : uint8_t, carry : bool, overflow : bool) void
+        +updateCmpFlags(result : int16_t) void
+        -setRegisterInternal(regId : RegisterID, value : uint8_t) void
+        -m_registers : array~uint8_t, 10~
+        -m_stackMemory : array~uint8_t, 256~
+        -m_program : vector~unique_ptr~IInstruction~~
+    }
+
+    class VMLoader {
+        +loadBinaryFile(filePath : string) vector~uint32_t~$
+    }
+
+    class InstructionFactory {
+        +InstructionFactory()
+        +createProgram(rawByteStream : vector~uint32_t~) vector~unique_ptr~IInstruction~~
+        -parseRaw(raw : uint32_t) ParsedInstruction
+        -m_registry : map~uint8_t, CreateFunc~
+    }
+
+    class VMException {
+        +VMException(message : string, pcIndex : int)
+        +getPCIndex() int
+        +getFullMessage() string
+        -m_pcIndex : int
+    }
+
+    %% 2. Instruction Interface & Concrete Classes
+    class IInstruction {
+        <<interface>>
+        +IInstruction(flag : uint8_t, src : uint8_t, dest : uint8_t)
+        +execute(context : VMContext&)* ExecutionResult
+        +~IInstruction()
+        #resolveValue(context : VMContext&, operand : uint8_t) uint8_t
+        #m_flag : uint8_t
+        #m_src : uint8_t
+        #m_dest : uint8_t
+    }
+
+    class MovInstruction {
+        +MovInstruction(flag : uint8_t, src : uint8_t, dest : uint8_t)
+        +execute(context : VMContext&) ExecutionResult
+    }
+    class AddInstruction {
+        +AddInstruction(flag : uint8_t, src : uint8_t, dest : uint8_t)
+        +execute(context : VMContext&) ExecutionResult
+    }
+    class JmpInstruction {
+        +JmpInstruction(flag : uint8_t, src : uint8_t, dest : uint8_t)
+        +execute(context : VMContext&) ExecutionResult
+    }
+
+    note for IInstruction "Other instructions (Sub, Mul, Cmp, Push, Pop, Be, Bne, Print) are omitted for brevity."
+
+    %% 3. Relationships
+    %% Inheritance
+    IInstruction <|.. MovInstruction
+    IInstruction <|.. AddInstruction
+    IInstruction <|.. JmpInstruction
+
+    %% Association & Dependency
+    VMContext o-- IInstruction : contains & executes
+    InstructionFactory ..> IInstruction : creates
+    InstructionFactory ..> VMException : throws (Load-time)
+    VMContext ..> VMException : throws (Runtime)
+    VMLoader ..> InstructionFactory : provides data
