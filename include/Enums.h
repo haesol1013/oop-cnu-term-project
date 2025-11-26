@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstddef>
 
 constexpr size_t REGISTER_COUNT = 10;
 
